@@ -1,0 +1,30 @@
+name: Trigger MQTT Update
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  mqtt-notify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install update-trigger
+        run: pip install update-trigger
+
+      - name: Send MQTT update
+        env:
+          MQTT_BROKER: ${{ secrets.MQTT_BROKER }}
+          MQTT_PORT: ${{ secrets.MQTT_PORT }}
+          MQTT_USERNAME: ${{ secrets.MQTT_USERNAME }}
+          MQTT_PASSWORD: ${{ secrets.MQTT_PASSWORD }}
+        run: python -m update_trigger
